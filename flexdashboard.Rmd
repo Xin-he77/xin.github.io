@@ -1,16 +1,15 @@
 ---
-title: "Plotly examples"
+title: "flexdashboard"
+author: "Xin  He"
+date: "10/22/2019"
 output: 
-  html_document:
-    toc: true
-    toc_float: true
-    
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
 ---
 
-# This is Xin's awesome website
-
-```{r}
-
+```{r setup, include=FALSE}
+library(flexdashboard)
 library(tidyverse)
 library(viridis)
 library(p8105.datasets)
@@ -34,6 +33,12 @@ nyc_airbnb =
   sample_n(5000)
 ```
 
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
 ```{r}
 nyc_airbnb %>%
   mutate(text_label = str_c("Price: $", price, '\nRating: ', rating)) %>% 
@@ -42,6 +47,11 @@ nyc_airbnb %>%
     color = ~price, text = ~text_label, alpha = 0.5)
 ```
 
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
 ```{r}
 nyc_airbnb %>%
 mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
@@ -49,19 +59,7 @@ mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>%
           colors = "Set2")
 ```
 
-
-```{r}
-common_neighborhoods =
-  nyc_airbnb %>% 
-  count(neighbourhood, sort = TRUE) %>% 
-  top_n(8) %>% 
-  select(neighbourhood)
-
-inner_join(nyc_airbnb, common_neighborhoods, by = "neighbourhood") %>% 
-  mutate(neighbourhood = fct_reorder(neighbourhood, price)) %>% 
-  plot_ly(y = ~price, color = ~neighbourhood, type = "box",
-          colors = "Set2")
-```
+### Chart C
 
 ```{r}
 nyc_airbnb %>% 
@@ -69,20 +67,3 @@ nyc_airbnb %>%
   mutate(neighbourhood = fct_reorder(neighbourhood, n)) %>% 
   plot_ly(x = ~neighbourhood, y = ~n, color = ~neighbourhood, type = "bar")
 ```
-
-```{r}
-scatter_ggplot = 
-  nyc_airbnb %>%
-  ggplot(aes(x = lat, y = long, color = price)) +
-  geom_point(alpha = 0.25) +
-  scale_color_viridis() +
-  coord_cartesian() +
-  theme_classic()
-
-ggplotly(scatter_ggplot)
-```
-
-
-
-
-
